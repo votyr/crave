@@ -1,17 +1,18 @@
-from openai import OpenAI
 import os
 
-# Initialize lazily so the server can start without OpenAI/Github credentials.
+from google import genai
+
 client = None
 
 
 def _client():
     global client
+
     if client is None:
-        client = OpenAI(
-            base_url="https://models.github.ai/inference",
-            api_key=os.getenv("GITHUB_TOKEN"),
+        client = genai.Client(
+            api_key=os.getenv("GEMINI_API_KEY")
         )
+
     return client
 
 
@@ -20,18 +21,9 @@ class AIService:
     @staticmethod
     def generate(prompt):
 
-        response = _client().chat.completions.create(
-            model="openai/gpt-4.1",
-            messages=[
-                {
-                    "role": "system",
-                    "content": "You are an expert nutritionist and fitness coach."
-                },
-                {
-                    "role": "user",
-                    "content": prompt
-                }
-            ]
+        response = _client().models.generate_content(
+            model="gemini-3.5-flash",
+            contents=prompt,
         )
 
-        return response.choices[0].message.content
+        return response.text

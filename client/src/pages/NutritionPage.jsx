@@ -1,10 +1,10 @@
 import { useMemo } from 'react';
-import { Utensils, Clock, Flame, Leaf, Droplets } from 'lucide-react';
+import { Utensils, Flame, Leaf } from 'lucide-react';
 import Board from '../components/ui/Board';
-import SectionHeading from '../components/ui/SectionHeading';
 import Ticket from '../components/ui/Ticket';
+import AIRecommendationPanel from '../components/AIRecommendationPanel';
 
-const categories = [
+const defaultCategories = [
   {
     name: 'Breakfast',
     items: [
@@ -39,15 +39,22 @@ const categories = [
   },
 ];
 
-function NutritionPage() {
+function NutritionPage({ profile, onApplyMealPlan }) {
+  const categories = useMemo(() => {
+    if (profile?.customMeals) {
+      return Object.entries(profile.customMeals).map(([name, items]) => ({ name, items }));
+    }
+    return defaultCategories;
+  }, [profile?.customMeals]);
+
   const flatItems = useMemo(
     () => categories.flatMap((cat) => cat.items.map((item) => ({ ...item, category: cat.name }))),
-    []
+    [categories]
   );
 
   return (
     <div className="space-y-6">
-      <section className="rounded-2xl border-2 border-crave-ink bg-crave-jade p-6 text-crave-bone shadow-hard">
+      <section className="relative z-10 rounded-2xl border-2 border-crave-ink bg-crave-jade p-6 text-crave-bone shadow-hard">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <div className="flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-widest2 text-crave-butter">
@@ -71,6 +78,8 @@ function NutritionPage() {
         </div>
       </section>
 
+      <AIRecommendationPanel page="nutrition" onApply={onApplyMealPlan} />
+
       <div className="grid gap-5 md:grid-cols-2">
         {categories.map((cat) => (
           <Board
@@ -93,9 +102,9 @@ function NutritionPage() {
         <Ticket
           title="Sample day"
           rows={[
-            { label: 'Breakfast', value: flatItems[0].label },
-            { label: 'Lunch', value: flatItems[3].label },
-            { label: 'Dinner', value: flatItems[6].label },
+            { label: 'Breakfast', value: flatItems[0]?.label || '—' },
+            { label: 'Lunch', value: flatItems[3]?.label || '—' },
+            { label: 'Dinner', value: flatItems[6]?.label || '—' },
           ]}
           totalLabel="Total"
           totalValue="~1,510 kcal"

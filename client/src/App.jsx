@@ -18,16 +18,22 @@ function ProtectedRoute({ isAuthenticated, children }) {
 
 function App() {
   const [profile, setProfile] = useState({
-    name: '',
-    age: '',
-    weightValue: '',
-    weightUnit: 'kg',
-    goal: '',
-    activity: '',
+    name: "",
+    age: "",
+    weightValue: "",
+    weightUnit: "kg",
+    goal: "",
+    activity: "",
     dietary: [],
-    religion: '',
+    religion: "",
     location: null,
-    climate: '',
+
+    weather: {
+      temperature: null,
+      humidity: null,
+      climate: "",
+    },
+
     allergies: [],
   });
 
@@ -85,10 +91,8 @@ function App() {
     })
       .then((r) => r.json())
       .then((data) => {
-        const weight = String(data.weight || '');
-
-        const weightValue = parseFloat(weight) || '';
-        const weightUnit = weight.toLowerCase().includes('lb') ? 'lb' : 'kg';
+        const weightValue = data.weight ?? '';
+        const weightUnit = 'kg'; // no unit column yet, default
 
         setProfile({
           name: auth.user?.name || '',
@@ -99,10 +103,14 @@ function App() {
           activity: data.activity || '',
           dietary: data.dietary || [],
           religion: data.religion || '',
-          location: data.location
-            ? { label: data.location, lat: data.lat, lon: data.lon }
+          location: data.location?.label
+            ? { label: data.location.label, lat: data.location.lat, lon: data.location.lon }
             : null,
-          climate: data.climate || '',
+          weather: {
+            temperature: data.weather?.temperature ?? null,
+            humidity: data.weather?.humidity ?? null,
+            climate: data.weather?.climate || '',
+          },
           allergies: data.allergies || [],
         });
       })
@@ -120,12 +128,19 @@ function App() {
       .then((r) => r.json())
       .then((data) => {
         if (data.weather?.climate) {
-          setProfile((current) => ({ ...current, climate: data.weather.climate }));
+          setProfile((current) => ({
+            ...current,
+            weather: {
+              temperature: data.weather.temperature,
+              humidity: data.weather.humidity,
+              climate: data.weather.climate,
+            },
+          }));
         }
       })
       .catch(console.error)
       .finally(() => setClimateLoading(false));
-  }, [profile.location]);
+  }, [profile.location?.label]);
 
   const handleAuth = async ({ fullName, email, password, mode }) => {
     try {
@@ -227,7 +242,9 @@ function App() {
             location: nextProfile.location?.label || '',
             lat: nextProfile.location?.lat ?? null,
             lon: nextProfile.location?.lon ?? null,
-            climate: nextProfile.climate,
+            temperature: nextProfile.weather?.temperature,
+            humidity: nextProfile.weather?.humidity,
+            climate: nextProfile.weather?.climate,
             allergies: nextProfile.allergies,
           }),
         }
@@ -289,6 +306,20 @@ function App() {
       ],
     };
   }, [profile]);
+
+  const handleApplyMealPlan = (result) => {
+    setProfile((current) => ({
+      ...current,
+      customMeals: result.meals, // { Breakfast: [...], Lunch: [...], ... }
+    }));
+  };
+
+  const handleApplyRecommendation = (result) => {
+    setProfile((current) => ({
+      ...current,
+      aiNotes: result.recommendations,
+    }));
+  };
 
   return (
     <BrowserRouter>
@@ -353,7 +384,7 @@ function App() {
           path="/nutrition"
           element={
             <AppShell auth={auth} onLogout={handleLogout} backendStatus={backendStatus}>
-              <NutritionPage />
+              <NutritionPage profile={profile} onApplyMealPlan={handleApplyMealPlan} />
             </AppShell>
           }
         />

@@ -1,14 +1,11 @@
 import requests
 
-
 class WeatherService:
 
     @staticmethod
     def current(lat, lon):
-        url = "https://api.open-meteo.com/v1/forecast"
-
         response = requests.get(
-            url,
+            "https://api.open-meteo.com/v1/forecast",
             params={
                 "latitude": lat,
                 "longitude": lon,
@@ -17,22 +14,41 @@ class WeatherService:
             timeout=10,
         )
 
-        data = response.json()["current"]
+        current = response.json()["current"]
 
-        temp = data["temperature_2m"]
+        temp = current["temperature_2m"]
+        humidity = current["relative_humidity_2m"]
 
-        # Simple climate classification
-        if temp >= 30:
-            climate = "hot"
-        elif temp >= 20:
-            climate = "warm"
+        # Feels-like climate classification
+        if temp >= 34:
+            climate = "very hot"
+
+        elif temp >= 30:
+            if humidity >= 70:
+                climate = "hot & humid"
+            else:
+                climate = "hot"
+
+        elif temp >= 24:
+            if humidity >= 80:
+                climate = "humid"
+            else:
+                climate = "warm"
+
+        elif temp >= 18:
+            if humidity >= 75:
+                climate = "cool & humid"
+            else:
+                climate = "mild"
+
         elif temp >= 10:
             climate = "cool"
+
         else:
             climate = "cold"
 
         return {
             "temperature": temp,
-            "humidity": data["relative_humidity_2m"],
+            "humidity": humidity,
             "climate": climate,
         }

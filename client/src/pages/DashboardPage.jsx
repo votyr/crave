@@ -8,22 +8,6 @@ import Badge from '../components/ui/Badge';
 const API_BASE = process.env.REACT_APP_API_BASE || 'http://localhost:5000';
 
 function DashboardPage({ profile, backendStatus, plan }) {
-  const [localStats, setLocalStats] = useState({ temp: null, condition: null, humidity: null });
-
-  useEffect(() => {
-    fetch(`${API_BASE}/api/user/stats?location=${encodeURIComponent(profile.location?.label || '')}`)
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => {
-        if (data?.weather) {
-          setLocalStats({
-            temp: data.weather.temperature,
-            condition: data.weather.condition,
-            humidity: data.weather.humidity,
-          });
-        }
-      })
-      .catch(() => {});
-  }, [profile.location?.label]);
 
   const focus = profile.goal === 'lose' ? 'Fat loss' : profile.goal === 'gain' ? 'Muscle gain' : 'Steady wellness';
 
@@ -59,7 +43,7 @@ function DashboardPage({ profile, backendStatus, plan }) {
             </h2>
             <p className="mt-3 max-w-2xl text-base leading-relaxed text-crave-ink/75">
               Your plan is tuned for {profile.activity} movement, {profile.religion || 'your'} dietary guidelines,
-              and {profile.climate} climate. CRAVE is ready to serve.
+              and {profile.weather?.climate || "your local"} climate. CRAVE is ready to serve.
             </p>
           </div>
 
@@ -70,16 +54,18 @@ function DashboardPage({ profile, backendStatus, plan }) {
             </div>
             <div className="flex items-end justify-between">
               <span className="font-display text-3xl font-extrabold text-crave-ink">
-                {localStats.temp != null ? `${localStats.temp}°C` : '--'}
+                {profile.weather?.temperature != null
+                  ? `${profile.weather.temperature}°C`
+                  : "--"}
               </span>
               <span className="font-mono text-xs font-bold uppercase tracking-widest text-crave-jade">
-                {localStats.condition || profile.climate}
+                {profile.weather?.climate || "--"}
               </span>
             </div>
-            {localStats.humidity != null && (
+            {profile.weather?.humidity != null && (
               <div className="flex items-center gap-1.5 text-xs text-crave-ink/70">
                 <Wind className="h-3.5 w-3.5" />
-                Humidity {localStats.humidity}%
+                Humidity {profile.weather.humidity}%
               </div>
             )}
           </div>
@@ -113,7 +99,7 @@ function DashboardPage({ profile, backendStatus, plan }) {
               { label: 'Dietary', value: profile.dietary?.join(', ') || 'Any' },
               { label: 'Religion', value: profile.religion || 'Any' },
               { label: 'Location', value: profile.location?.label },
-              { label: 'Climate', value: profile.climate },
+              { label: "Weather", value: profile.weather ? `${profile.weather.temperature}°C • ${profile.weather.humidity}% • ${profile.weather.climate}` : "--", },
               { label: 'Activity', value: profile.activity },
             ]}
             totalLabel="Consistency"

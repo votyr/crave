@@ -61,12 +61,38 @@ function ProfilePage({ profile, onProfileChange, onSave, climateLoading }) {
       <div className="grid gap-5 md:grid-cols-2">
         <Input label="Name" name="name" value={profile.name} onChange={updateField} />
         <Input label="Age" name="age" value={profile.age} onChange={updateField} />
-        <div className="flex gap-2">
-          <Input label="Weight" name="weightValue" type="number" value={profile.weightValue} onChange={updateField} />
-          <select name="weightUnit" value={profile.weightUnit || 'kg'} onChange={updateField} className="rounded-xl border-2 border-crave-ink px-2">
+        <div className="flex items-end gap-3">
+          <div className="flex-1">
+            <Input
+              label="Weight"
+              name="weightValue"
+              type="number"
+              value={profile.weightValue}
+              onChange={updateField}
+            />
+          </div>
+
+          <select
+            name="weightUnit"
+            value={profile.weightUnit || "kg"}
+            onChange={updateField}
+            className="
+              h-12
+              rounded-xl
+              border-2
+              border-crave-ink
+              bg-crave-bone2
+              px-3
+              text-sm
+              text-crave-ink
+              focus:outline-none
+              focus:ring-0
+            "
+          >
             <option value="kg">kg</option>
             <option value="lb">lb</option>
           </select>
+
         </div>
         <Input
           label="Goal"
@@ -84,21 +110,56 @@ function ProfilePage({ profile, onProfileChange, onSave, climateLoading }) {
           onChange={updateField}
           options={activityOptions}
         />
-        <LocationInput
-          value={profile.location?.label || ''}
-          onChange={(location) =>
-            onProfileChange((current) => ({
-              ...current,
-              location,
-            }))
-          }
-        />
+        <div>
+          <label className="mb-2 block font-mono text-[11px] font-bold uppercase tracking-widest2 text-crave-ink/70">
+            City
+          </label>
+
+          <LocationInput
+            value={profile.location?.label || ""}
+            onChange={(location) =>
+              onProfileChange((current) => ({
+                ...current,
+                location,
+              }))
+            }
+          />
+        </div>
         <Input label="Religion" name="religion" as="select" value={profile.religion} onChange={updateField} options={religionOptions} />
-        <Input
-          label="Climate"
-          value={profile.climate || 'Unknown'}
-          readOnly
-        />
+        <div className="rounded-xl border-2 border-crave-ink bg-crave-bone2 p-4">
+          <p className="mb-2 font-mono text-[11px] font-bold uppercase tracking-widest2 text-crave-ink/70">
+            Local Weather
+          </p>
+
+          <div className="grid grid-cols-3 gap-4 text-center">
+            <div>
+              <p className="text-2xl font-display font-extrabold">
+                {profile.weather?.temperature ?? "--"}°
+              </p>
+              <p className="text-xs uppercase opacity-70">
+                Temp
+              </p>
+            </div>
+
+            <div>
+              <p className="text-2xl font-display font-extrabold">
+                {profile.weather?.humidity ?? "--"}%
+              </p>
+              <p className="text-xs uppercase opacity-70">
+                Humidity
+              </p>
+            </div>
+
+            <div>
+              <p className="text-lg font-display font-extrabold capitalize">
+                {profile.weather?.climate || "--"}
+              </p>
+              <p className="text-xs uppercase opacity-70">
+                Climate
+              </p>
+            </div>
+          </div>
+        </div>
         <div className="md:col-span-2">
           <label className="block text-sm font-medium text-crave-ink">
             <span className="mb-2 block font-mono text-[11px] font-bold uppercase tracking-widest2 text-crave-ink/70">
@@ -147,13 +208,6 @@ function ProfilePage({ profile, onProfileChange, onSave, climateLoading }) {
         {message && <p className="text-sm font-semibold text-crave-jade">{message}</p>}
       </div>
 
-      <div className="mt-5 flex items-start gap-3 rounded-2xl border-2 border-crave-ink bg-crave-butter p-4 text-crave-ink shadow-hard-sm">
-        <Info className="mt-0.5 h-5 w-5 shrink-0" />
-        <p className="text-sm leading-relaxed">
-          This profile can be stored locally or synced with your backend account when the server is available. Your
-          religion and dietary tags help the AI respect your preferences.
-        </p>
-      </div>
     </div>
   );
 }

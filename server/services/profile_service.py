@@ -1,7 +1,6 @@
 from models import UserProfile
 from database import db
 
-
 class ProfileService:
 
     @staticmethod

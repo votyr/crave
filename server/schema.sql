@@ -61,6 +61,18 @@ CREATE TABLE user_profiles (
 
     city VARCHAR(100),
 
+    lat DECIMAL(9,6),
+
+    lon DECIMAL(9,6),
+
+    temperature DECIMAL(5,2),
+
+    humidity INTEGER,
+
+    climate VARCHAR(30),
+
+    weather_updated_at TIMESTAMP,
+
     goal VARCHAR(50),
 
     activity_level VARCHAR(50),

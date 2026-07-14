@@ -34,7 +34,16 @@ def _user_payload(user: User):
         "dietary": dietary,
         "religion": getattr(profile, "religion", None),
         "location": getattr(profile, "city", None) or getattr(profile, "country", None),
-        "climate": getattr(profile, "climate", None),
+        "weather": {
+            "temperature": getattr(profile, "temperature", None),
+            "humidity": getattr(profile, "humidity", None),
+            "climate": getattr(profile, "climate", None),
+            "updated_at": (
+                profile.weather_updated_at.isoformat()
+                if profile.weather_updated_at
+                else None
+            ),
+        },
         "allergies": allergies,
         "weight": getattr(profile, "weight", None),
     }

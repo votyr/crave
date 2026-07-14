@@ -6,11 +6,7 @@ from .location_service import LocationService
 from .food_service import FoodService
 from .profile_service import ProfileService
 from .progress_service import ProgressService
-# Note: recommendation_service is optional; keep server bootable even if the file is empty/incomplete.
-try:
-    from .recommendation_service import RecommendationService
-except Exception:  # pragma: no cover
-    RecommendationService = None
+from .recommendation_service import RecommendationService
 
 __all__ = [
     "AIService",

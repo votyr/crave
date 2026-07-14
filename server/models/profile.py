@@ -15,9 +15,18 @@ class UserProfile(db.Model):
     religion = db.Column(db.String(50))
     country = db.Column(db.String(100))
     city = db.Column(db.String(100))
-    lat = db.Column(db.Float)          # NEW
-    lon = db.Column(db.Float)          # NEW
-    climate = db.Column(db.String(50)) # NEW
+
+    # Location
+    lat = db.Column(db.Float)
+    lon = db.Column(db.Float)
+
+    # Cached weather
+    temperature = db.Column(db.Float)
+    humidity = db.Column(db.Integer)
+    climate = db.Column(db.String(30))
+    weather_updated_at = db.Column(db.DateTime)
+
+    # Fitness
     goal = db.Column(db.String(50))
     activity_level = db.Column(db.String(50))
     dietary_preferences = db.Column(db.JSON)
