@@ -25,18 +25,11 @@ app.secret_key = os.getenv("SECRET_KEY", "dev_secret")
 
 db_port = os.getenv("DB_PORT")
 
-# Allow the server to start even when DB env vars are not provided (local preview mode)
-if all([os.getenv("DB_USER"), os.getenv("DB_PASSWORD"), os.getenv("DB_HOST"), db_port, os.getenv("DB_NAME")]):
-    app.config["SQLALCHEMY_DATABASE_URI"] = (
-        f"postgresql://"
-        f"{os.getenv('DB_USER')}:"
-        f"{os.getenv('DB_PASSWORD')}@"
-        f"{os.getenv('DB_HOST')}:"
-        f"{db_port}/"
-        f"{os.getenv('DB_NAME')}"
-    )
+database_url = os.getenv("POSTGRESQL")
+
+if database_url:
+    app.config["SQLALCHEMY_DATABASE_URI"] = database_url
 else:
-    # In-memory sqlite for development/offline use
     app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
 
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
@@ -46,8 +39,11 @@ db.init_app(app)
 CORS(
     app,
     supports_credentials=True,
-    origins=["http://localhost:5173",
-    "http://localhost:3000"]
+    origins=[
+        "http://localhost:5173",
+        "http://localhost:3000",
+        "https://crave-lac.vercel.app"
+    ]
 )
 
 # OpenAI client is used in server/services/ai_service.py.
@@ -120,12 +116,12 @@ app.register_blueprint(ai_bp, url_prefix="/api/ai")
 app.register_blueprint(requirements_bp, url_prefix="/api/requirements")
 
 
-if __name__ == "__main__":
-    with app.app_context():
-        db.create_all()
+with app.app_context():
+    db.create_all()
 
+if __name__ == "__main__":
     app.run(
         host="127.0.0.1",
         port=5000,
-        debug=True
+        debug=True,
     )
