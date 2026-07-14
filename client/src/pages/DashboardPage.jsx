@@ -5,7 +5,7 @@ import Board from '../components/ui/Board';
 import Ticket from '../components/ui/Ticket';
 import Badge from '../components/ui/Badge';
 
-const API_BASE = process.env.REACT_APP_API_BASE || 'http://localhost:5000';
+const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:5000';
 
 function DashboardPage({ profile, backendStatus, plan }) {
 

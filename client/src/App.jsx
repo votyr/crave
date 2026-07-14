@@ -10,7 +10,7 @@ import FitnessPage from './pages/FitnessPage';
 import NutritionPage from './pages/NutritionPage';
 import CommunityPage from './pages/CommunityPage';
 
-const API_BASE = process.env.REACT_APP_API_BASE || 'http://localhost:5000';
+const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:5000';
 
 function ProtectedRoute({ isAuthenticated, children }) {
   return isAuthenticated ? children : <Navigate to="/login" replace />;

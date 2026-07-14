@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Sparkles, Check } from 'lucide-react';
 
-const API_BASE = process.env.REACT_APP_API_BASE || 'http://localhost:5000';
+const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:5000';
 
 function AIRecommendationPanel({ page, endpoint = '/api/ai/meal-plan', onApply }) {
   const [loading, setLoading] = useState(false);
