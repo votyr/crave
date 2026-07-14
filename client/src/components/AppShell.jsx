@@ -1,12 +1,12 @@
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { Activity, Leaf, Users, LayoutGrid, User, LogOut } from 'lucide-react';
+import logo from '../assets/logo.png';
 
 const links = [
   { to: '/dashboard', label: 'Dashboard', icon: LayoutGrid },
   { to: '/nutrition', label: 'Nutrition', icon: Leaf },
   { to: '/fitness', label: 'Fitness', icon: Activity },
   { to: '/community', label: 'Community', icon: Users },
-  { to: '/profile', label: 'Profile', icon: User },
 ];
 
 function AppShell({ auth, onLogout, children, backendStatus }) {
@@ -15,11 +15,13 @@ function AppShell({ auth, onLogout, children, backendStatus }) {
   return (
     <div className="min-h-screen bg-crave-bone text-crave-ink">
       <header className="sticky top-0 z-40 border-b-2 border-crave-ink bg-crave-bone/95 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-4 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
+        <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-5 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
           <Link to="/dashboard" className="group flex items-center gap-3">
-            <span className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-crave-ink bg-crave-poppy text-crave-bone shadow-hard-sm transition group-hover:-translate-x-0.5 group-hover:-translate-y-0.5 group-hover:shadow-hard">
-              <span className="font-display text-lg font-extrabold">C</span>
-            </span>
+            <img
+              src={logo}
+              alt="CRAVE Logo"
+              className="h-14 w-auto object-cover"
+            />
             <div>
               <span className="block font-display text-xl font-extrabold leading-none">CRAVE</span>
               <span className="font-mono text-[10px] font-bold uppercase tracking-widest2 text-crave-ink/60">
@@ -48,19 +50,18 @@ function AppShell({ auth, onLogout, children, backendStatus }) {
           </nav>
 
           <div className="flex items-center gap-3">
-            <div className="hidden items-center gap-2 rounded-full border-2 border-crave-ink bg-crave-bone2 px-3 py-1.5 sm:flex">
-              <span className="h-2 w-2 animate-pulseSoft rounded-full bg-crave-jade" />
-              <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-crave-ink/80">
-                {backendStatus}
-              </span>
-            </div>
-            <button
-              onClick={onLogout}
-              className="inline-flex items-center gap-1.5 rounded-full border-2 border-crave-ink bg-crave-bone px-3 py-2 font-mono text-xs font-bold uppercase tracking-widest shadow-hard-sm transition hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-hard"
+            <NavLink
+              to="/profile"
+              className={({ isActive }) =>
+                `flex h-11 w-11 items-center justify-center rounded-full border-2 transition ${
+                  isActive
+                    ? 'border-crave-ink bg-crave-poppy text-crave-bone shadow-hard-sm'
+                    : 'border-crave-ink bg-crave-bone hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-hard'
+                }`
+              }
             >
-              <LogOut className="h-4 w-4" />
-              Logout
-            </button>
+              <User className="h-5 w-5" strokeWidth={2.5} />
+            </NavLink>
           </div>
         </div>
       </header>

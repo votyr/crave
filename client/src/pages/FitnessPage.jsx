@@ -1,9 +1,10 @@
-import { Activity, Dumbbell, Timer, Zap, Flame, HeartPulse } from 'lucide-react';
+import { useMemo } from 'react';
+import { Activity, Dumbbell, Flame } from 'lucide-react';
 import Board from '../components/ui/Board';
-import SectionHeading from '../components/ui/SectionHeading';
 import Ticket from '../components/ui/Ticket';
+import AIRecommendationPanel from '../components/AIRecommendationPanel';
 
-const categories = [
+const defaultCategories = [
   {
     name: 'Warm-up',
     items: [
@@ -38,10 +39,17 @@ const categories = [
   },
 ];
 
-function FitnessPage() {
+function FitnessPage({ profile, onApplyWorkoutPlan, onSelectExercise }) {
+  const categories = useMemo(() => {
+    if (profile?.customWorkout) {
+      return Object.entries(profile.customWorkout).map(([name, items]) => ({ name, items }));
+    }
+    return defaultCategories;
+  }, [profile?.customWorkout]);
+
   return (
     <div className="space-y-6">
-      <section className="rounded-2xl border-2 border-crave-ink bg-crave-poppy p-6 text-crave-bone shadow-hard">
+      <section className="relative z-10 rounded-2xl border-2 border-crave-ink bg-crave-poppy p-6 text-crave-bone shadow-hard">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <div className="flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-widest2 text-crave-butter">
@@ -65,9 +73,16 @@ function FitnessPage() {
         </div>
       </section>
 
+      <AIRecommendationPanel page="fitness" onApply={onApplyWorkoutPlan} />
+
       <div className="grid gap-5 md:grid-cols-2">
         {categories.map((cat) => (
-          <Board key={cat.name} title={cat.name} items={cat.items} />
+          <Board
+            key={cat.name}
+            title={cat.name}
+            items={cat.items}
+            onItemClick={(item) => onSelectExercise?.(item.label)}
+          />
         ))}
       </div>
 
@@ -84,9 +99,7 @@ function FitnessPage() {
               <div
                 key={day.label}
                 className={`flex items-center justify-between rounded-xl border-2 px-4 py-3 ${
-                  day.active
-                    ? 'border-crave-bone bg-crave-jadeDeep'
-                    : 'border-crave-bone/40 bg-crave-bone/10'
+                  day.active ? 'border-crave-bone bg-crave-jadeDeep' : 'border-crave-bone/40 bg-crave-bone/10'
                 }`}
               >
                 <span className="font-mono text-xs font-bold uppercase tracking-widest2">{day.label}</span>

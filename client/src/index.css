@@ -1,3 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;0,9..144,800;0,9..144,900;1,9..144,400;1,9..144,600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -50,4 +53,117 @@ body {
     radial-gradient(9px at 9px 100%, transparent 98%, #000) 0 100%/22px 100% repeat-x, linear-gradient(#000, #000);
   -webkit-mask-composite: source-out;
   mask-composite: exclude;
+}
+
+/* Lamplight Press recipe book paper textures */
+.lamp-paper {
+  background-color: #F4E9D0;
+  background-image:
+    radial-gradient(rgba(58, 44, 92, 0.05) 1px, transparent 1px),
+    radial-gradient(rgba(192, 140, 80, 0.06) 1px, transparent 1px);
+  background-size: 20px 20px, 8px 8px;
+  background-position: 0 0, 4px 4px;
+  position: relative;
+}
+
+.lamp-grain::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: .35;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+.lamp-spine {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 80px;
+  transform: translateX(-50%);
+  background: linear-gradient(to right,
+      transparent 0%,
+      rgba(58, 44, 92, 0.03) 20%,
+      rgba(58, 44, 92, 0.45) 50%,
+      rgba(58, 44, 92, 0.03) 80%,
+      transparent 100%);
+  pointer-events: none;
+  z-index: 40;
+}
+
+.lamp-spine::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: repeating-linear-gradient(to bottom,
+      rgba(58, 44, 92, 0.8) 0 8px,
+      transparent 8px 14px);
+  transform: translateX(-50%);
+  opacity: 0.7;
+}
+
+.lamp-cut {
+  clip-path: polygon(
+      1% 2%, 18% 0%, 38% 3%, 62% 1%, 85% 4%, 99% 1%,
+      100% 18%, 98% 48%, 100% 78%, 99% 99%,
+      80% 98%, 52% 100%, 28% 97%, 6% 100%,
+      0% 82%, 2% 52%, 0% 22%, 1% 10%
+    );
+}
+
+.lamp-shadow-pop {
+  filter: drop-shadow(0 40px 60px rgba(58, 44, 92, 0.45));
+}
+
+.lamp-chip {
+  background: #A8D6B8;
+  border: 2px solid #3A2C5C;
+  border-radius: 999px;
+  padding: 6px 16px;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  box-shadow: 4px 4px 0 #3A2C5C;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.lamp-btn {
+  background: #E08244;
+  color: #3A2C5C;
+  border: 2px solid #3A2C5C;
+  box-shadow: 4px 4px 0 #3A2C5C;
+  border-radius: 30px 24px 28px 22px;
+  font-weight: 800;
+  transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.lamp-btn:hover {
+  transform: translate(-3px, -3px);
+  box-shadow: 7px 7px 0 #3A2C5C;
+}
+
+.lamp-bullet {
+  width: 8px;
+  height: 8px;
+  background-color: #C23D3D;
+  border-radius: 2px;
+  margin-right: 12px;
+  flex-shrink: 0;
+  transform: rotate(45deg);
+}
+
+.lamp-leader {
+  flex-grow: 1;
+  border-bottom: 2px dotted rgba(58, 44, 92, 0.3);
+  margin: 0 12px;
+  position: relative;
+  top: -4px;
 }

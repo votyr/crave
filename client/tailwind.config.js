@@ -13,11 +13,21 @@ module.exports = {
           poppy: '#F0431F',
           butter: '#F6C544',
         },
+        lamp: {
+          cream: '#F4E9D0',
+          'cream-2': '#EFE0BE',
+          ink: '#3A2C5C',
+          pumpkin: '#E08244',
+          mint: '#A8D6B8',
+          crimson: '#C23D3D',
+        },
       },
       fontFamily: {
         display: ['"Bricolage Grotesque"', 'system-ui', 'sans-serif'],
         body: ['"Hanken Grotesk"', 'system-ui', 'sans-serif'],
         mono: ['"Spline Sans Mono"', 'ui-monospace', 'monospace'],
+        'lamp-display': ['"Fraunces"', 'Georgia', 'serif'],
+        'lamp-body': ['"Inter"', 'system-ui', 'sans-serif'],
       },
       boxShadow: {
         hard: '4px 4px 0 #181613',

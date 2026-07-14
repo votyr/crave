@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Save, Info } from 'lucide-react';
+import { Save, Info, LogOut } from 'lucide-react';
 import Input from '../components/ui/Input';
 import Button from '../components/ui/Button';
 import LocationInput from '../components/LocationInput';
@@ -30,7 +30,7 @@ const religionOptions = [
   { value: 'other', label: 'Other' },
 ];
 
-function ProfilePage({ profile, onProfileChange, onSave, climateLoading }) {
+function ProfilePage({ profile, onProfileChange, onSave, climateLoading, onLogout }) {
   const [message, setMessage] = useState('');
 
   const updateField = (event) => {
@@ -202,10 +202,30 @@ function ProfilePage({ profile, onProfileChange, onSave, climateLoading }) {
       </div>
 
       <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <Button variant="solid" onClick={handleSave} disabled={climateLoading}>
-          {climateLoading ? 'Fetching climate...' : 'Save profile'}
-        </Button>
-        {message && <p className="text-sm font-semibold text-crave-jade">{message}</p>}
+        <div className="flex gap-3">
+          <Button
+            variant="solid"
+            onClick={handleSave}
+            disabled={climateLoading}
+          >
+            {climateLoading ? 'Fetching climate...' : 'Save Profile'}
+          </Button>
+
+          <Button
+            variant="outline"
+            onClick={onLogout}
+            className="border-black-500 text-black-600 hover:bg-red-50"
+          >
+            <LogOut className="mr-2 h-4 w-4" />
+            Logout
+          </Button>
+        </div>
+
+        {message && (
+          <p className="text-sm font-semibold text-crave-jade">
+            {message}
+          </p>
+        )}
       </div>
 
     </div>

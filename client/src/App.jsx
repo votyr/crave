@@ -9,8 +9,9 @@ import ProfilePage from './pages/ProfilePage';
 import FitnessPage from './pages/FitnessPage';
 import NutritionPage from './pages/NutritionPage';
 import CommunityPage from './pages/CommunityPage';
+import RecipePage from './pages/RecipePage';
 
-const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:5000';
+const API_BASE = import.meta.env.VITE_API_BASE;
 
 function ProtectedRoute({ isAuthenticated, children }) {
   return isAuthenticated ? children : <Navigate to="/login" replace />;
@@ -36,6 +37,18 @@ function App() {
 
     allergies: [],
   });
+
+  const [selectedRecipe, setSelectedRecipe] = useState(null);
+
+  const handleApplyWorkoutPlan = (result) => {
+    const trimmed = Object.fromEntries(
+      Object.entries(result.exercises).map(([category, items]) => [
+        category,
+        items.map((i) => ({ label: i.label, value: i.short, tag: i.tag })),
+      ])
+    );
+    setProfile((current) => ({ ...current, customWorkout: trimmed }));
+  };
 
   const [backendStatus, setBackendStatus] = useState('Checking connection...');
   const [climateLoading, setClimateLoading] = useState(false);
@@ -269,6 +282,8 @@ function App() {
     }
   };
 
+  const [selectedDish, setSelectedDish] = useState(null);
+
   const plan = useMemo(() => {
     const dietary = profile.dietary || [];
 
@@ -375,7 +390,7 @@ function App() {
           path="/fitness"
           element={
             <AppShell auth={auth} onLogout={handleLogout} backendStatus={backendStatus}>
-              <FitnessPage />
+              <FitnessPage profile={profile} onApplyWorkoutPlan={handleApplyWorkoutPlan} />
             </AppShell>
           }
         />
@@ -383,10 +398,30 @@ function App() {
         <Route
           path="/nutrition"
           element={
-            <AppShell auth={auth} onLogout={handleLogout} backendStatus={backendStatus}>
-              <NutritionPage profile={profile} onApplyMealPlan={handleApplyMealPlan} />
+            <AppShell
+              auth={auth}
+              onLogout={handleLogout}
+              backendStatus={backendStatus}
+            >
+              <NutritionPage
+                profile={profile}
+                onApplyMealPlan={handleApplyMealPlan}
+              />
             </AppShell>
           }
+        />
+
+        <Route
+          path="/recipes"
+          element={
+                <AppShell
+                    auth={auth}
+                    onLogout={handleLogout}
+                    backendStatus={backendStatus}
+                >
+                    <RecipePage />
+                </AppShell>
+            }
         />
 
         <Route

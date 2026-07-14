@@ -3,6 +3,7 @@ import { Utensils, Flame, Leaf } from 'lucide-react';
 import Board from '../components/ui/Board';
 import Ticket from '../components/ui/Ticket';
 import AIRecommendationPanel from '../components/AIRecommendationPanel';
+import { useNavigate } from "react-router-dom";
 
 const defaultCategories = [
   {
@@ -51,6 +52,8 @@ function NutritionPage({ profile, onApplyMealPlan }) {
     () => categories.flatMap((cat) => cat.items.map((item) => ({ ...item, category: cat.name }))),
     [categories]
   );
+  
+  const navigate = useNavigate();
 
   return (
     <div className="space-y-6">
