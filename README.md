@@ -1,4 +1,4 @@
-# 🥗 CRAVE
+# 🥗 Crave
 
 ### *Your AI-powered nutrition, fitness, and wellness companion.*
 
