@@ -42,7 +42,9 @@ CORS(
     origins=[
         "http://localhost:5173",
         "http://localhost:3000",
-        "https://crave-lac.vercel.app"
+        "https://crave-lac.vercel.app",
+        "http://localhost:5000",
+        
     ]
 )
 

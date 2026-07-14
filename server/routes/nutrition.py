@@ -1,7 +1,6 @@
 from flask import Blueprint, jsonify, session
 
 from services import (
-    NutritionService,
     WeatherService,
     ProfileService
 )
@@ -28,12 +27,3 @@ def generate():
         profile.city,
         profile.country
     )
-
-    plan = NutritionService.generate(
-        profile,
-        weather
-    )
-
-    return jsonify({
-        "meal_plan": plan
-    })
