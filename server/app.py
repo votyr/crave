@@ -67,6 +67,12 @@ from routes import (
 # Health + weather endpoints expected by frontend
 from services import WeatherService
 
+@app.route("/")
+def home():
+    return {
+        "status": "online",
+        "message": "Crave Backend is running 🚀"
+    }
 
 @app.get("/api/health")
 def health():
