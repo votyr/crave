@@ -169,7 +169,7 @@ function LandingPage() {
                 Tell CRAVE about your diet, location, and goals. The AI kitchen will have a plan ready in seconds.
               </p>
             </div>
-            <Button variant="butter" href="#/signup">
+            <Button variant="butter" href="/signup">
               Get started
             </Button>
           </div>

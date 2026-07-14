@@ -46,7 +46,8 @@ db.init_app(app)
 CORS(
     app,
     supports_credentials=True,
-    origins=["http://localhost:3000"]
+    origins=["http://localhost:5173",
+    "http://localhost:3000"]
 )
 
 # OpenAI client is used in server/services/ai_service.py.

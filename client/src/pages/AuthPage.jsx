@@ -95,7 +95,7 @@ function AuthPage({ mode = 'login', onAuth }) {
 
             <div className="mt-5 text-center text-sm text-crave-ink/70">
               {isSignup ? 'Already have a tab? ' : 'New here? '}
-              <a href={isSignup ? '#/login' : '#/signup'} className="font-bold text-crave-poppy underline">
+              <a href={isSignup ? '/login' : '/signup'} className="font-bold text-crave-poppy underline">
                 {isSignup ? 'Log in' : 'Sign up'}
               </a>
             </div>
