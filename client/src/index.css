@@ -1,0 +1,53 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: 'Hanken Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #f2ead8;
+  color: #181613;
+}
+
+/* subtle halftone grain overlay used behind hero/board sections */
+.grain-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.05;
+  mix-blend-mode: multiply;
+  background-image: radial-gradient(circle, #181613 1px, transparent 1.4px);
+  background-size: 5px 5px;
+}
+
+/* dotted leader line used in menu-board style rows */
+.leader-line {
+  flex: 1;
+  border-bottom: 2px dotted rgba(24, 22, 19, 0.35);
+  transform: translateY(-4px);
+  margin: 0 8px;
+  min-width: 12px;
+}
+
+/* receipt / ticket zig-zag edge */
+.ticket-edge {
+  -webkit-mask: radial-gradient(9px at 9px 0, transparent 98%, #000) 0 0/22px 100% repeat-x,
+    radial-gradient(9px at 9px 100%, transparent 98%, #000) 0 100%/22px 100% repeat-x, linear-gradient(#000, #000);
+  -webkit-mask-composite: source-out;
+  mask-composite: exclude;
+}
