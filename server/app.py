@@ -13,6 +13,7 @@ from models import (
     MealPlan,
     WorkoutPlan,
     ProgressLog,
+    Recipe,
     AIHistory,
 )
 
@@ -59,6 +60,10 @@ from routes import (
     fitness_bp,
     ai_bp,
     requirements_bp,
+    recipes_bp,
+    progress_bp,
+    workout_plans_bp,
+    meal_plans_bp,
 )
 
 
@@ -116,6 +121,10 @@ app.register_blueprint(nutrition_bp, url_prefix="/api/nutrition")
 app.register_blueprint(fitness_bp, url_prefix="/api/fitness")
 app.register_blueprint(ai_bp, url_prefix="/api/ai")
 app.register_blueprint(requirements_bp, url_prefix="/api/requirements")
+app.register_blueprint(recipes_bp, url_prefix="/api/recipes")
+app.register_blueprint(progress_bp, url_prefix="/api/progress")
+app.register_blueprint(workout_plans_bp, url_prefix="/api/workouts")
+app.register_blueprint(meal_plans_bp, url_prefix="/api/meals")
 
 
 with app.app_context():

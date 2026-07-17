@@ -14,13 +14,39 @@ class WorkoutPlan(db.Model):
         nullable=False
     )
 
-    title = db.Column(db.String(150))
+    title = db.Column(
+        db.String(150),
+        nullable=False
+    )
+
+    description = db.Column(db.Text)
+
+    plan_json = db.Column(db.JSON)
+
+    workout_json = db.Column(db.JSON)
 
     ai_response = db.Column(db.Text)
+
+    duration_weeks = db.Column(db.Integer)
+
+    difficulty = db.Column(db.String(30))
+
+    estimated_minutes = db.Column(db.Integer)
+
+    active = db.Column(
+        db.Boolean,
+        default=False
+    )
 
     created_at = db.Column(
         db.DateTime,
         default=datetime.utcnow
+    )
+
+    updated_at = db.Column(
+        db.DateTime,
+        default=datetime.utcnow,
+        onupdate=datetime.utcnow
     )
 
     user = db.relationship(

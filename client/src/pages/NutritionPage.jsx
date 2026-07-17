@@ -1,9 +1,11 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Utensils, Flame, Leaf } from 'lucide-react';
 import Board from '../components/ui/Board';
 import Ticket from '../components/ui/Ticket';
 import AIRecommendationPanel from '../components/AIRecommendationPanel';
 import { useNavigate } from "react-router-dom";
+
+const API_BASE = import.meta.env.VITE_API_BASE;
 
 const defaultCategories = [
   {
@@ -41,12 +43,47 @@ const defaultCategories = [
 ];
 
 function NutritionPage({ profile, onApplyMealPlan }) {
+  const [activePlan, setActivePlan] = useState(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem('crave_token');
+    if (!token) return;
+
+    let cancelled = false;
+
+    const loadActivePlan = async () => {
+      try {
+        const response = await fetch(`${API_BASE}/api/meals/latest`, {
+          headers: { Authorization: `Bearer ${token}` },
+          credentials: 'include',
+        });
+
+        if (response.status === 404) return;
+        if (!response.ok) throw new Error('Could not load meal plan.');
+
+        const data = await response.json();
+        if (!cancelled) setActivePlan(data.meal);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    loadActivePlan();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   const categories = useMemo(() => {
-    if (profile?.customMeals) {
-      return Object.entries(profile.customMeals).map(([name, items]) => ({ name, items }));
+    const mealPlan = activePlan?.meal_json || activePlan?.plan_json;
+    const meals = mealPlan?.meals || mealPlan || profile?.customMeals;
+
+    if (meals) {
+      return Object.entries(meals).map(([name, items]) => ({ name, items }));
     }
     return defaultCategories;
-  }, [profile?.customMeals]);
+  }, [activePlan, profile?.customMeals]);
 
   const flatItems = useMemo(
     () => categories.flatMap((cat) => cat.items.map((item) => ({ ...item, category: cat.name }))),
@@ -54,6 +91,11 @@ function NutritionPage({ profile, onApplyMealPlan }) {
   );
   
   const navigate = useNavigate();
+
+  const handleApplyPlan = async (result) => {
+    const savedPlan = await onApplyMealPlan(result);
+    setActivePlan(savedPlan);
+  };
 
   return (
     <div className="space-y-6">
@@ -81,7 +123,7 @@ function NutritionPage({ profile, onApplyMealPlan }) {
         </div>
       </section>
 
-      <AIRecommendationPanel page="nutrition" onApply={onApplyMealPlan} />
+      <AIRecommendationPanel page="nutrition" onApply={handleApplyPlan} />
 
       <div className="grid gap-5 md:grid-cols-2">
         {categories.map((cat) => (

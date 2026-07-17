@@ -3,7 +3,6 @@ from database import db
 
 
 class AIHistory(db.Model):
-
     __tablename__ = "ai_history"
 
     id = db.Column(db.Integer, primary_key=True)
@@ -14,15 +13,27 @@ class AIHistory(db.Model):
         nullable=False
     )
 
+    # nutrition | workout | recipe | chat
+    type = db.Column(db.String(30), nullable=False)
+
     model_used = db.Column(db.String(100))
 
     prompt_version = db.Column(db.String(20))
-    
+
+    prompt = db.Column(db.Text, nullable=False)
+
+    response_text = db.Column(db.Text)
+
+    response_json = db.Column(db.JSON)
+
     metadata_json = db.Column(db.JSON)
 
-    prompt = db.Column(db.Text)
+    is_saved = db.Column(
+        db.Boolean,
+        default=False
+    )
 
-    response = db.Column(db.Text)
+    linked_plan_id = db.Column(db.Integer)
 
     created_at = db.Column(
         db.DateTime,

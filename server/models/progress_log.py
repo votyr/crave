@@ -23,11 +23,24 @@ class ProgressLog(db.Model):
 
     calories = db.Column(db.Integer)
 
+    protein = db.Column(db.Integer)
+
+    carbs = db.Column(db.Integer)
+
+    fat = db.Column(db.Integer)
+
     water_ml = db.Column(db.Integer)
 
     steps = db.Column(db.Integer)
 
     sleep_hours = db.Column(db.Float)
+
+    workout_completed = db.Column(
+        db.Boolean,
+        default=False
+    )
+
+    mood = db.Column(db.String(30))
 
     notes = db.Column(db.Text)
 

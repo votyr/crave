@@ -1,8 +1,10 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Activity, Dumbbell, Flame } from 'lucide-react';
 import Board from '../components/ui/Board';
 import Ticket from '../components/ui/Ticket';
 import AIRecommendationPanel from '../components/AIRecommendationPanel';
+
+const API_BASE = import.meta.env.VITE_API_BASE;
 
 const defaultCategories = [
   {
@@ -40,12 +42,52 @@ const defaultCategories = [
 ];
 
 function FitnessPage({ profile, onApplyWorkoutPlan, onSelectExercise }) {
+  const [activePlan, setActivePlan] = useState(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem('crave_token');
+    if (!token) return;
+
+    let cancelled = false;
+
+    const loadActivePlan = async () => {
+      try {
+        const response = await fetch(`${API_BASE}/api/workouts/latest`, {
+          headers: { Authorization: `Bearer ${token}` },
+          credentials: 'include',
+        });
+
+        if (response.status === 404) return;
+        if (!response.ok) throw new Error('Could not load workout plan.');
+
+        const data = await response.json();
+        if (!cancelled) setActivePlan(data.workout);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    loadActivePlan();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   const categories = useMemo(() => {
-    if (profile?.customWorkout) {
-      return Object.entries(profile.customWorkout).map(([name, items]) => ({ name, items }));
+    const workout = activePlan?.workout_json || activePlan?.plan_json;
+    const exercises = workout?.exercises || workout || profile?.customWorkout;
+
+    if (exercises) {
+      return Object.entries(exercises).map(([name, items]) => ({ name, items }));
     }
     return defaultCategories;
-  }, [profile?.customWorkout]);
+  }, [activePlan, profile?.customWorkout]);
+
+  const handleApplyPlan = async (result) => {
+    const savedPlan = await onApplyWorkoutPlan(result);
+    setActivePlan(savedPlan);
+  };
 
   return (
     <div className="space-y-6">
@@ -73,7 +115,7 @@ function FitnessPage({ profile, onApplyWorkoutPlan, onSelectExercise }) {
         </div>
       </section>
 
-      <AIRecommendationPanel page="fitness" onApply={onApplyWorkoutPlan} />
+      <AIRecommendationPanel page="fitness" onApply={handleApplyPlan} />
 
       <div className="grid gap-5 md:grid-cols-2">
         {categories.map((cat) => (

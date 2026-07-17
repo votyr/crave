@@ -72,3 +72,40 @@ class User(db.Model):
         back_populates="user",
         cascade="all, delete"
     )
+
+    profile = db.relationship(
+    "UserProfile",
+    uselist=False,
+    back_populates="user",
+    cascade="all, delete-orphan"
+    )
+
+    meal_plans = db.relationship(
+        "MealPlan",
+        back_populates="user",
+        cascade="all, delete-orphan"
+    )
+
+    workout_plans = db.relationship(
+        "WorkoutPlan",
+        back_populates="user",
+        cascade="all, delete-orphan"
+    )
+
+    progress_logs = db.relationship(
+        "ProgressLog",
+        back_populates="user",
+        cascade="all, delete-orphan"
+    )
+
+    ai_history = db.relationship(
+        "AIHistory",
+        back_populates="user",
+        cascade="all, delete-orphan"
+    )
+
+    recipes = db.relationship(
+    "Recipe",
+    back_populates="user",
+    cascade="all, delete-orphan"
+    )

@@ -13,6 +13,7 @@ function AIRecommendationPanel({ page, onApply }) {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState('');
+  const [applying, setApplying] = useState(false);
   const [excluded, setExcluded] = useState([]);
   const [chatInput, setChatInput] = useState('');
 
@@ -57,32 +58,19 @@ function AIRecommendationPanel({ page, onApply }) {
     await fetchPlan(next);
   };
 
-  const handleApplyClick = () => {
+  const handleApplyClick = async () => {
     if (!result) return;
 
-    if (result.meals) {
-      const trimmed = Object.fromEntries(
-        Object.entries(result.meals).map(([category, items]) => [
-          category,
-          items.map((i) => ({ label: i.label, value: i.short || i.value, tag: i.tag })),
-        ])
-      );
-      onApply({ ...result, meals: trimmed });
-      return;
-    }
+    setApplying(true);
+    setError('');
 
-    if (result.exercises) {
-      const trimmed = Object.fromEntries(
-        Object.entries(result.exercises).map(([category, items]) => [
-          category,
-          items.map((i) => ({ label: i.label, value: i.short || i.value, tag: i.tag })),
-        ])
-      );
-      onApply({ ...result, exercises: trimmed });
-      return;
+    try {
+      await onApply(result);
+    } catch (applyError) {
+      setError(applyError.message || 'Could not save this plan.');
+    } finally {
+      setApplying(false);
     }
-
-    onApply(result);
   };
 
   const groupedEntries = result?.meals
@@ -167,10 +155,11 @@ function AIRecommendationPanel({ page, onApply }) {
           <button
             type="button"
             onClick={handleApplyClick}
+            disabled={applying}
             className="mt-4 flex items-center gap-2 rounded-full border-2 border-crave-ink bg-crave-jade px-4 py-1.5 font-mono text-xs font-bold uppercase tracking-widest text-crave-bone"
           >
             <Check className="h-3.5 w-3.5" />
-            Apply
+            {applying ? 'Saving...' : 'Apply'}
           </button>
         </div>
       )}

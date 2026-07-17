@@ -40,14 +40,35 @@ function App() {
 
   const [selectedRecipe, setSelectedRecipe] = useState(null);
 
-  const handleApplyWorkoutPlan = (result) => {
-    const trimmed = Object.fromEntries(
-      Object.entries(result.exercises).map(([category, items]) => [
-        category,
-        items.map((i) => ({ label: i.label, value: i.short, tag: i.tag })),
-      ])
-    );
-    setProfile((current) => ({ ...current, customWorkout: trimmed }));
+  const handleApplyWorkoutPlan = async (result) => {
+    const token = localStorage.getItem('crave_token');
+
+    if (!token) {
+      throw new Error('Log in to save a workout plan.');
+    }
+
+    const response = await fetch(`${API_BASE}/api/workouts`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+      body: JSON.stringify({
+        title: result.title || result.summary || 'AI Workout Plan',
+        description: result.summary || null,
+        ai_response: JSON.stringify(result),
+        workout_json: result,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || 'Could not save workout plan.');
+    }
+
+    return data.workout;
   };
 
   const [backendStatus, setBackendStatus] = useState('Checking connection...');
@@ -322,11 +343,35 @@ function App() {
     };
   }, [profile]);
 
-  const handleApplyMealPlan = (result) => {
-    setProfile((current) => ({
-      ...current,
-      customMeals: result.meals, // { Breakfast: [...], Lunch: [...], ... }
-    }));
+  const handleApplyMealPlan = async (result) => {
+    const token = localStorage.getItem('crave_token');
+
+    if (!token) {
+      throw new Error('Log in to save a meal plan.');
+    }
+
+    const response = await fetch(`${API_BASE}/api/meals`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+      body: JSON.stringify({
+        title: result.title || result.summary || 'AI Meal Plan',
+        description: result.summary || null,
+        ai_response: JSON.stringify(result),
+        meal_json: result,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || 'Could not save meal plan.');
+    }
+
+    return data.meal;
   };
 
   const handleApplyRecommendation = (result) => {

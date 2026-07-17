@@ -5,6 +5,9 @@ from .location_service import LocationService
 from .food_service import FoodService
 from .profile_service import ProfileService
 from .progress_service import ProgressService
+from .recipe_service import RecipeService
+from .workout_plan_service import WorkoutPlanService
+from .meal_plan_service import MealPlanService
 from .recommendation_service import RecommendationService
 
 __all__ = [
@@ -15,5 +18,8 @@ __all__ = [
     "FoodService",
     "ProfileService",
     "ProgressService",
+    "RecipeService",
+    "WorkoutPlanService",
+    "MealPlanService",
     "RecommendationService",
 ]
