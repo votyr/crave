@@ -8,6 +8,7 @@ from .progress_service import ProgressService
 from .recipe_service import RecipeService
 from .workout_plan_service import WorkoutPlanService
 from .meal_plan_service import MealPlanService
+from .unsplash_service import UnsplashService
 from .recommendation_service import RecommendationService
 
 __all__ = [
@@ -21,5 +22,6 @@ __all__ = [
     "RecipeService",
     "WorkoutPlanService",
     "MealPlanService",
+    "UnsplashService",
     "RecommendationService",
 ]

@@ -1,7 +1,15 @@
+import json
 import os
 from flask import Blueprint, jsonify, request, session
 
-from services import AIService, RecommendationService, ProfileService, FitnessService
+from services import (
+    AIService,
+    RecommendationService,
+    ProfileService,
+    FitnessService,
+    RecipeService,
+    UnsplashService,
+)
 from auth_tokens import verify_token
 
 ai_bp = Blueprint("ai", __name__)
@@ -100,6 +108,21 @@ def recipe():
         missing_ingredients=missing_ingredients,
         context=context,
     )
+    result["image_url"] = UnsplashService.get_recipe_image(
+        result.get("search_term") or result.get("title")
+    )
+
+    saved_recipe = RecipeService.create(user_id, {
+        "title": result["title"],
+        "description": result.get("description"),
+        "ingredients": result.get("ingredients"),
+        "instructions": result.get("steps"),
+        "recipe_json": result,
+        "ai_response": json.dumps(result),
+        "image_url": result["image_url"],
+    })
+    result["id"] = saved_recipe.id
+
     return jsonify(result)
 
 

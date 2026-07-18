@@ -7,6 +7,8 @@ import os
 from datetime import datetime
 from dotenv import load_dotenv
 from database import db
+from flask_migrate import Migrate
+
 from models import (
     User,
     UserProfile,
@@ -36,6 +38,8 @@ else:
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db.init_app(app)
+migrate = Migrate(app, db)
+
 
 CORS(
     app,

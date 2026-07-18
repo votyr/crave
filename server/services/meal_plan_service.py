@@ -5,10 +5,37 @@ from database import db
 class MealPlanService:
 
     @staticmethod
+    def _meal_title(meal_json):
+        if not isinstance(meal_json, dict):
+            return None
+
+        meals = meal_json.get("meals", meal_json)
+        if not isinstance(meals, dict):
+            return None
+
+        for items in meals.values():
+            if not isinstance(items, list):
+                continue
+
+            for item in items:
+                if not isinstance(item, dict):
+                    continue
+
+                title = item.get("title") or item.get("label")
+                if isinstance(title, str) and title.strip():
+                    return title.strip()
+
+        return None
+
+    @staticmethod
     def create(user_id, data):
         plan_data = dict(data)
         plan_data.pop("active", None)
-        meal_json = plan_data.get("meal_json")
+        meal_json = plan_data.get("meal_json") or plan_data.get("plan_json")
+
+        meal_title = MealPlanService._meal_title(meal_json)
+        if meal_title:
+            plan_data["title"] = meal_title
 
         if meal_json is not None and "plan_json" not in plan_data:
             plan_data["plan_json"] = meal_json
@@ -57,7 +84,11 @@ class MealPlanService:
             return None
 
         plan_data = dict(data)
-        meal_json = plan_data.get("meal_json")
+        meal_json = plan_data.get("meal_json") or plan_data.get("plan_json")
+
+        meal_title = MealPlanService._meal_title(meal_json)
+        if meal_title and "title" not in plan_data:
+            plan_data["title"] = meal_title
 
         if meal_json is not None and "plan_json" not in plan_data:
             plan_data["plan_json"] = meal_json

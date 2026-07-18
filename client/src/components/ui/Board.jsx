@@ -1,4 +1,4 @@
-function Board({ title, items, className = '', labelClass = '', onItemClick }) {
+function Board({ title, items, className = '', labelClass = '', onItemClick, compactIngredients = false }) {
   return (
     <div className={`rounded-2xl border-2 border-crave-ink bg-crave-bone p-5 shadow-hard ${className}`}>
       {title && (
@@ -13,13 +13,28 @@ function Board({ title, items, className = '', labelClass = '', onItemClick }) {
             <li
               key={item.label || item.title}
               onClick={clickable ? () => onItemClick(item) : undefined}
-              className={`flex items-end gap-2 ${clickable ? 'cursor-pointer rounded-lg -mx-2 px-2 py-1 transition hover:bg-crave-bone2' : ''}`}
+              className={`${compactIngredients ? 'block' : 'flex items-end gap-2'} ${clickable ? 'cursor-pointer rounded-lg -mx-2 px-2 py-1 transition hover:bg-crave-bone2' : ''}`}
             >
-              <span className={`font-mono text-xs font-bold uppercase tracking-widest2 ${labelClass || 'text-crave-poppy'}`}>
-                {item.label || item.title}
-              </span>
-              <span className="leader-line" />
-              <span className="text-right text-sm font-medium text-crave-ink/90">{item.value || item.detail}</span>
+              {compactIngredients ? (
+                <>
+                  <span className={`font-mono text-xs font-bold uppercase tracking-widest2 ${labelClass || 'text-crave-poppy'}`}>
+                    {item.title || item.label}
+                  </span>
+                  <ul className="mt-1 space-y-0.5 text-sm text-crave-ink/80">
+                    {(item.ingredients || []).slice(0, 3).map((ingredient) => (
+                      <li key={ingredient}>• {ingredient}</li>
+                    ))}
+                  </ul>
+                </>
+              ) : (
+                <>
+                  <span className={`font-mono text-xs font-bold uppercase tracking-widest2 ${labelClass || 'text-crave-poppy'}`}>
+                    {item.label || item.title}
+                  </span>
+                  <span className="leader-line" />
+                  <span className="text-right text-sm font-medium text-crave-ink/90">{item.value || item.detail}</span>
+                </>
+              )}
             </li>
           );
         })}

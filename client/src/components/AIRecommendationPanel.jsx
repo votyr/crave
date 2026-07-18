@@ -9,6 +9,18 @@ const ENDPOINTS = {
   profile: '/api/ai/recommend',
 };
 
+function formatIngredient(ingredient) {
+  if (typeof ingredient === 'string') return ingredient;
+
+  const amount = [ingredient.quantity, ingredient.unit]
+    .filter(Boolean)
+    .join(' ');
+  const preparation = ingredient.preparation ? `, ${ingredient.preparation}` : '';
+  const notes = ingredient.notes ? ` (${ingredient.notes})` : '';
+
+  return `${amount ? `${amount} ` : ''}${ingredient.name || ''}${preparation}${notes}`;
+}
+
 function AIRecommendationPanel({ page, onApply }) {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
@@ -107,9 +119,14 @@ function AIRecommendationPanel({ page, onApply }) {
                   <ul className="mt-1 space-y-1">
                     {items.map((item, i) => (
                       <li key={i} className="text-sm text-crave-ink/80">
-                        <span className="font-semibold text-crave-ink">{item.label}</span> —{' '}
-                        {item.detail || item.value}{' '}
-                        <span className="text-crave-ink/50">({item.tag})</span>
+                        <span className="font-semibold text-crave-ink">{item.title || item.label}</span> —{' '}
+                        {item.description || item.detail || item.value}{' '}
+                        <span className="text-crave-ink/50">({item.calories || item.tag})</span>
+                        {Array.isArray(item.ingredients) && item.ingredients.length > 0 && (
+                          <span className="block text-crave-ink/60">
+                            Ingredients: {item.ingredients.map(formatIngredient).join(', ')}
+                          </span>
+                        )}
                       </li>
                     ))}
                   </ul>

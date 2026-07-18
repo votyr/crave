@@ -4,6 +4,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ArrowLeft, Users, Clock, Flame, RefreshCcw } from 'lucide-react';
 
 const API_BASE = import.meta.env.VITE_API_BASE;
+const PLACEHOLDER_IMAGE_URL = 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -12,7 +13,12 @@ function normalizeIngredient(ing) {
         const parts = ing.split(/\s*[-—]\s*|\s+(?=[\d¼½¾⅓⅔⅛⅜⅝⅞])/);
         return { name: parts[0]?.trim() || ing, amount: parts[1]?.trim() || '' };
     }
-    return { name: ing.name || ing.label || '', amount: ing.amount || ing.value || '' };
+    const amount = [ing.quantity, ing.unit].filter(Boolean).join(' ');
+    const preparation = ing.preparation ? `, ${ing.preparation}` : '';
+    return {
+        name: `${ing.name || ing.label || ''}${preparation}`,
+        amount: amount || ing.notes || ing.amount || ing.value || '',
+    };
     }
 
     function formatStepNumber(index) {
@@ -36,6 +42,14 @@ function normalizeIngredient(ing) {
     const imageRef = useRef(null);
     const rotateXTo = useRef(null);
     const rotateYTo = useRef(null);
+
+    const goBackToPicker = () => {
+        setMode(null);
+        setRecipe(null);
+        setQuery('');
+        setIngredientsInput([]);
+        setMissingList([]);
+    };
 
     const buildPayload = (selectedMode, overrides = {}) => {
         const base = { mode: selectedMode, missingIngredients: overrides.missingList ?? missingList };
@@ -266,7 +280,7 @@ function normalizeIngredient(ing) {
             />
 
             <div className="flex gap-4">
-            <button onClick={() => setMode(null)} className="rounded-xl border-2 border-lamp-ink px-6 py-3">
+            <button onClick={goBackToPicker} className="rounded-xl border-2 border-lamp-ink px-6 py-3">
                 Back
             </button>
             <button onClick={() => fetchRecipe('search')} className="lamp-btn px-8 py-3">
@@ -295,7 +309,7 @@ function normalizeIngredient(ing) {
             />
 
             <div className="flex gap-4">
-            <button onClick={() => setMode(null)} className="rounded-xl border-2 border-lamp-ink px-6 py-3">
+            <button onClick={goBackToPicker} className="rounded-xl border-2 border-lamp-ink px-6 py-3">
                 Back
             </button>
             <button onClick={() => fetchRecipe('ingredients')} className="lamp-btn px-8 py-3">
@@ -336,7 +350,7 @@ function normalizeIngredient(ing) {
         <div className="space-y-8">
         <div className="flex items-center justify-between">
             <button
-            onClick={onBack}
+            onClick={goBackToPicker}
             className="group inline-flex items-center gap-3 font-lamp-display text-lg font-black text-lamp-ink transition-colors hover:text-lamp-crimson"
             >
             <span className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-lamp-ink transition-all group-hover:bg-lamp-ink group-hover:text-lamp-cream">
@@ -366,7 +380,7 @@ function normalizeIngredient(ing) {
             {/* Left page */}
             <div className="relative z-10">
                 <div
-                className="lamp-paper lamp-grain min-h-[600px] border-2 border-lamp-ink p-8 sm:p-12 lg:min-h-[840px] lg:rounded-l-[60px_80px] lg:border-r-0 lg:p-20"
+                className="lamp-paper lamp-grain flex h-full flex-col justify-between border-2 border-lamp-ink p-8 sm:p-12 lg:min-h-[840px] lg:rounded-l-[60px_80px] lg:border-r-0 lg:p-20"
                 style={{ transformOrigin: 'right center' }}
                 >
                 <div className="relative z-10">
@@ -374,7 +388,7 @@ function normalizeIngredient(ing) {
                     Kitchen Note No. 042
                     </span>
 
-                    <h1 ref={titleRef} className="mb-8 font-lamp-display text-5xl font-black leading-[0.85] tracking-tight text-lamp-ink sm:mb-14 sm:text-7xl lg:text-[104px]">
+                    <h1 ref={titleRef} className="mb-8 font-lamp-display text-5xl font-black leading-[0.85] tracking-tight text-lamp-ink sm:mb-14 sm:text-7xl lg:text-[92px]">
                     {recipe.dish}
                     </h1>
 
@@ -441,7 +455,7 @@ function normalizeIngredient(ing) {
             {/* Right page */}
             <div className="relative z-10">
                 <div
-                className="lamp-paper lamp-grain min-h-[600px] border-2 border-lamp-ink p-8 sm:p-12 lg:min-h-[840px] lg:rounded-r-[60px_80px] lg:border-l-0 lg:p-20"
+                className="lamp-paper lamp-grain flex h-full flex-col justify-between border-2 border-lamp-ink p-8 sm:p-12 lg:min-h-[840px] lg:rounded-r-[60px_80px] lg:border-l-0 lg:p-20"
                 style={{ transformOrigin: 'left center' }}
                 >
                 <div className="relative z-10">
@@ -467,10 +481,14 @@ function normalizeIngredient(ing) {
                     <div ref={imageRef} className="group relative mb-8 self-center lg:self-start lg:ml-16">
                         <div className="relative h-[200px] w-[280px] rotate-[-2deg] overflow-hidden border-[3px] border-lamp-ink bg-lamp-cream lamp-cut transition-all duration-700 group-hover:rotate-[3deg] group-hover:scale-[1.05] sm:h-[260px] sm:w-[360px]">
                         <img
-                            src={recipe.image || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80'}
+                            src={recipe.image_url || PLACEHOLDER_IMAGE_URL}
                             alt={`Prepared ${recipe.dish}`}
                             className="h-full w-full object-cover grayscale-[0.1] contrast-[1.1]"
                             loading="lazy"
+                            onError={(event) => {
+                                event.currentTarget.onerror = null;
+                                event.currentTarget.src = PLACEHOLDER_IMAGE_URL;
+                            }}
                         />
                         <div className="absolute left-3 top-3 bg-lamp-ink px-3 py-1.5 font-lamp-display text-[10px] font-black uppercase tracking-widest text-lamp-cream sm:left-5 sm:top-5">
                             Plate IV · Fig. 1

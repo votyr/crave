@@ -80,7 +80,21 @@ function NutritionPage({ profile, onApplyMealPlan }) {
     const meals = mealPlan?.meals || mealPlan || profile?.customMeals;
 
     if (meals) {
-      return Object.entries(meals).map(([name, items]) => ({ name, items }));
+      return Object.entries(meals).map(([name, items]) => ({
+        name,
+        items: items.map((item) => ({
+          ...item,
+          title: item.title || item.label,
+          ingredients: Array.isArray(item.ingredients)
+            ? item.ingredients.map((ingredient) => (
+                typeof ingredient === 'string' ? ingredient : ingredient.name
+              ))
+            : String(item.value || item.description || '')
+                .split(',')
+                .map((ingredient) => ingredient.trim())
+                .filter(Boolean),
+        })),
+      }));
     }
     return defaultCategories;
   }, [activePlan, profile?.customMeals]);
@@ -132,6 +146,7 @@ function NutritionPage({ profile, onApplyMealPlan }) {
             title={cat.name}
             items={cat.items}
             className={cat.name === 'Hydration' ? 'bg-crave-bone2' : 'bg-crave-bone'}
+            compactIngredients
           />
         ))}
       </div>

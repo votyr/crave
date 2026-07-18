@@ -79,7 +79,15 @@ function FitnessPage({ profile, onApplyWorkoutPlan, onSelectExercise }) {
     const exercises = workout?.exercises || workout || profile?.customWorkout;
 
     if (exercises) {
-      return Object.entries(exercises).map(([name, items]) => ({ name, items }));
+      return Object.entries(exercises).map(([name, items]) => ({
+        name,
+        items: items.slice(0, 3).map((item) => ({
+          ...item,
+          title: item.title || item.label,
+          label: item.title || item.label,
+          value: item.sets_reps || item.tag || item.short || item.value,
+        })),
+      }));
     }
     return defaultCategories;
   }, [activePlan, profile?.customWorkout]);
@@ -123,7 +131,7 @@ function FitnessPage({ profile, onApplyWorkoutPlan, onSelectExercise }) {
             key={cat.name}
             title={cat.name}
             items={cat.items}
-            onItemClick={(item) => onSelectExercise?.(item.label)}
+            onItemClick={(item) => onSelectExercise?.(item.title || item.label)}
           />
         ))}
       </div>

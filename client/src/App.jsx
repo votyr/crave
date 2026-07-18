@@ -47,6 +47,10 @@ function App() {
       throw new Error('Log in to save a workout plan.');
     }
 
+    const firstExercise = Object.values(result.exercises || {})
+      .flat()
+      .find((exercise) => exercise?.title || exercise?.label);
+
     const response = await fetch(`${API_BASE}/api/workouts`, {
       method: 'POST',
       headers: {
@@ -55,7 +59,7 @@ function App() {
       },
       credentials: 'include',
       body: JSON.stringify({
-        title: result.title || result.summary || 'AI Workout Plan',
+        title: firstExercise?.title || firstExercise?.label || result.title || 'AI Workout Plan',
         description: result.summary || null,
         ai_response: JSON.stringify(result),
         workout_json: result,
@@ -350,6 +354,10 @@ function App() {
       throw new Error('Log in to save a meal plan.');
     }
 
+    const firstMeal = Object.values(result.meals || {})
+      .flat()
+      .find((meal) => meal?.title || meal?.label);
+
     const response = await fetch(`${API_BASE}/api/meals`, {
       method: 'POST',
       headers: {
@@ -358,7 +366,7 @@ function App() {
       },
       credentials: 'include',
       body: JSON.stringify({
-        title: result.title || result.summary || 'AI Meal Plan',
+        title: firstMeal?.title || firstMeal?.label || result.title || 'AI Meal Plan',
         description: result.summary || null,
         ai_response: JSON.stringify(result),
         meal_json: result,
